@@ -95,9 +95,14 @@ router.get('/:user', function (req, res, next) {
 // Update account
 router.patch('/:user', function (req, res, next) {
   var user_id = req.params.user;
+  var updates = {};
+  if (req.body.username !== undefined) updates.username = req.body.username;
+  if (req.body.full_name !== undefined) updates.full_name = req.body.full_name;
+  var current_password = typeof req.body.current_password === 'string' ? req.body.current_password : null;
   Account.findOneAndUpdate({
-    _id: user_id
-  }, req.body)
+    _id: user_id,
+    password: current_password
+  }, updates)
     .then(account => {
       if (account) {
         return res.status(200).json({
